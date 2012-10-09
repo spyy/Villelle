@@ -8,7 +8,6 @@ import cidservice.*;
 public class PuheluListaMidlet extends MIDlet {
     
     private Service_Stub webService;
-    private ListScreen screen;
     
     public PuheluListaMidlet() {    
     }
@@ -21,7 +20,7 @@ public class PuheluListaMidlet extends MIDlet {
         
         Displayable current = Display.getDisplay(this).getCurrent();
         if (current == null) {            
-            screen = new ListScreen(this, "Soitto lista");
+            ListScreen screen = new ListScreen(this, "Soitto lista");
             Display.getDisplay(this).setCurrent(screen);
         }
     }
@@ -55,20 +54,13 @@ public class PuheluListaMidlet extends MIDlet {
         System.out.println(response);
     }
     
-    public void update() {
-        System.out.println("PuheluListaMidlet::update");
-        
-        String response = "Failed response";
+    public void call2(String number) {
+        System.out.println("PuheluListaMidlet::call" + number);
         
         try {
-            response = this.webService.listCalls("4444,0451202979");
-        } catch (java.rmi.RemoteException ex) {
+            this.platformRequest("tel:" + number);
+        } catch (ConnectionNotFoundException ex) {
             System.out.println(ex.getMessage());
         }
-        
-        System.out.println(response);
-        
-        this.screen.updateList(response);
     }
-        
 }

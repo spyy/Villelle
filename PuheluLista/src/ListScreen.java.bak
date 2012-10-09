@@ -67,7 +67,7 @@ class ListScreen
     private int countTokens(String response) {
         int beginIndex = 0;        
         int numOfTokens = 0;        
-        int endIndex = response.indexOf(" ", beginIndex);
+        int endIndex = response.indexOf(' ', beginIndex);
         
         while (endIndex>0) {            
             numOfTokens++;
