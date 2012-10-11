@@ -8,67 +8,64 @@ import cidservice.*;
 public class PuheluListaMidlet extends MIDlet {
     
     private Service_Stub webService;
-    private ListScreen screen;
+    private ListScreen listScreen;
+    private ListRequester listRequester;
+    private TraceScreen traceScreen;
     
     public PuheluListaMidlet() {    
-    }
-
-    // Sets the MIDlet's current Display to a HelloScreen object.
-    public void startApp() {
-        System.out.println("PuheluListaMidlet::startApp");
-        
+        this.listScreen = new ListScreen(this, "Soitto lista");
+        this.traceScreen = new TraceScreen(this, "Traces");
         this.webService = new Service_Stub();
-        
+        this.listRequester = new ListRequester(this, webService);
+    }
+    
+    public void startApp() {        
+        Traces.addLine("Midlet::startApp");
+                        
         Displayable current = Display.getDisplay(this).getCurrent();
         if (current == null) {            
-            screen = new ListScreen(this, "Soitto lista");
-            Display.getDisplay(this).setCurrent(screen);
+            this.showListScreen();
         }
     }
-
-    public void pauseApp() {
-        System.out.println("PuheluListaMidlet::pauseApp");
+        
+    public void pauseApp() {        
+        Traces.addLine("Midlet::pauseApp");
     }
 
-    public void destroyApp(boolean unconditional) {
-        System.out.println("PuheluListaMidlet::destroyApp");
+    public void destroyApp(boolean unconditional) {        
+        Traces.addLine("Midlet::destroyApp");
     }
     
-    public void onCapitalRequestComplete(String nation, String capital) {
-        System.out.println("PuheluListaMidlet::onCapitalRequestComplete");
+    public void showListScreen() {
+        Display display = Display.getDisplay(this);
+        this.listScreen.show(display);
     }
     
-    public void onCapitalRequestError(String code) {
-        System.out.println("PuheluListaMidlet::onCapitalRequestError");
+    public void showTraceScreen() {
+        Display display = Display.getDisplay(this);
+        this.traceScreen.show(display);
+    }
+    
+    public void onRequestComplete(String response) {
+        Traces.addLine("Midlet::onRequestComplete");
+        this.listScreen.updateList(response);
+    }
+    
+    public void onRequestError(String code) {
+        Traces.addLine("Midlet::onRequestError");
     }    
     
     public void call(String number) {
-        System.out.println("PuheluListaMidlet::call" + number);
-        String response = "Response:";
-        
+        Traces.addLine("Midlet::call" + number);
         try {
-            response = this.webService.listCalls("4444,0451202979");
-        } catch (java.rmi.RemoteException ex) {
-            System.out.println(ex.getMessage());
+            this.platformRequest("tel:" + number);
+        } catch (ConnectionNotFoundException ex) {
+            Traces.addLine(ex.getMessage());            
         }
-        
-        System.out.println(response);
     }
     
-    public void update() {
-        System.out.println("PuheluListaMidlet::update");
-        
-        String response = "Failed response";
-        
-        try {
-            response = this.webService.listCalls("4444,0451202979");
-        } catch (java.rmi.RemoteException ex) {
-            System.out.println(ex.getMessage());
-        }
-        
-        System.out.println(response);
-        
-        this.screen.updateList(response);
+    public void update() {        
+        this.listRequester.requestUpdate();        
     }
         
 }

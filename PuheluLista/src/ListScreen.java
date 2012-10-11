@@ -9,7 +9,8 @@ class ListScreen
 
     private final PuheluListaMidlet midlet;
     private final Command exitCommand;
-    private final Command updateCommand;    
+    private final Command updateCommand;  
+    private final Command traceCommand;  
         
     public static final String[] phoneNumbers = {
         "+358403675010", "+358451202979"
@@ -20,6 +21,8 @@ class ListScreen
         this.midlet = midlet;
         exitCommand = new Command("Exit", Command.EXIT, 1);
         updateCommand = new Command("Update", Command.ITEM, 1);
+        traceCommand = new Command("Traces", Command.ITEM, 1);
+        addCommand(traceCommand);
         addCommand(exitCommand);
         addCommand(updateCommand);
         setCommandListener(this);
@@ -32,8 +35,17 @@ class ListScreen
             midlet.notifyDestroyed();
         }
         else if (command == updateCommand) {
+            this.deleteAll();
+            this.addIntoList("Request pending...");            
             midlet.update();
-        }            
+        }
+        else if (command == traceCommand) {
+            midlet.showTraceScreen();
+        }
+    }
+    
+    public void show(Display display) {
+        display.setCurrent(this);
     }
     
     public void updateList(String response) {
