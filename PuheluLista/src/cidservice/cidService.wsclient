@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsclientconfig serviceType="jsr-172" version="1.0">
+    <client>
+        <project>HeiMualima</project>
+        <class location="${src.dir}" type="cidservice.cidService"/>
+        <property name="DataBinding" value="false"/>
+        <property name="cldc11" value="true"/>
+    </client>
+    <services>
+        <service file="cidService.asmx.wsdl" url="https://services.mobiconverge.com/cidquery/cidService.asmx?WSDL"/>
+    </services>
+</wsclientconfig>
