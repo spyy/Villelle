@@ -10,21 +10,26 @@ class ListScreen
     private final PuheluListaMidlet midlet;
     private final Command exitCommand;
     private final Command updateCommand;  
-    private final Command traceCommand;  
+    private final Command traceCommand;
+    private final Command selectCommand;
         
-    public static final String[] phoneNumbers = {
-        "+358403675010", "+358451202979"
+    public static final String[] testNumbers = {
+        "0403675010", "0403674984"
     };
 
     public ListScreen(PuheluListaMidlet midlet, String title) {
         super(title, List.IMPLICIT);        
         this.midlet = midlet;
+        
         exitCommand = new Command("Exit", Command.EXIT, 1);
         updateCommand = new Command("Update", Command.ITEM, 1);
         traceCommand = new Command("Traces", Command.ITEM, 1);
+        selectCommand = new Command("Select", Command.ITEM, 1);
+        setSelectCommand(selectCommand);
         addCommand(traceCommand);
         addCommand(exitCommand);
         addCommand(updateCommand);
+        
         setCommandListener(this);
     }
 
@@ -42,19 +47,34 @@ class ListScreen
         else if (command == traceCommand) {
             midlet.showTraceScreen();
         }
+        else if (command == selectCommand) {
+            int index = this.getSelectedIndex();
+            String number = this.getString(index);
+            this.midlet.call(number);
+        }  
     }
     
     public void show(Display display) {
+        this.deleteAll();
+        this.addTestNumbers();
         display.setCurrent(this);
     }
     
     public void updateList(String response) {
         this.deleteAll();
+        this.addTestNumbers();
+        
         String[] tokens = this.splitResponse(response);
-        System.out.println("num of tokens: " + Integer.toString(tokens.length));
+        System.out.println("num of tokens: " + Integer.toString(tokens.length));        
         for (int i=0; i<tokens.length; i++) {
             this.addIntoList(tokens[i]);
         }        
+    }
+    
+    private void addTestNumbers() {
+        for (int i=0; i<this.testNumbers.length; i++) {
+            this.append(this.testNumbers[i], null);
+        }
     }
     
     private void addIntoList(String token) {

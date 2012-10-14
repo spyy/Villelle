@@ -1,4 +1,4 @@
-import java.rmi.RemoteException;
+
 import cidservice.*;
 
 
@@ -31,7 +31,10 @@ public class ListRequester implements Runnable {
             this.midlet.onRequestComplete(response);
         } catch (java.rmi.RemoteException ex) {
             this.midlet.onRequestError(ex.getMessage());
+        } catch (javax.xml.rpc.JAXRPCException ex) {
+            this.midlet.onRequestError(ex.getMessage());
         }
+        
         
         threadIsRunning = false;
     }
